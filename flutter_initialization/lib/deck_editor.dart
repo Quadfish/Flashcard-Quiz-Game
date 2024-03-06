@@ -1,124 +1,141 @@
-// deck_editor.dart
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck; // Alias 'deck' to avoid conflicts
+import 'databaseHelper.dart' as db;
 
 class DeckEditor extends StatefulWidget {
-  final customDeck.Deck deck;
-
-  DeckEditor({required this.deck});
-
   @override
   _DeckEditorState createState() => _DeckEditorState();
 }
 
 class _DeckEditorState extends State<DeckEditor> {
-  int _selectedCardIndex = 0;
+  late List<customDeck.Deck> _decks = [];
+  List<customDeck.Card> _cards = [];
+  customDeck.Deck? _selectedDeck;
+  TextEditingController _deckNameController = TextEditingController();
+  TextEditingController _questionController = TextEditingController();
+  TextEditingController _answerController = TextEditingController();
 
-  void _selectCard(int index) {
+  @override
+  void initState() {
+    super.initState();
+    _loadDecks();
+  }
+
+  Future<void> _loadDecks() async {
+    List<Map<String, dynamic>> deckMaps = await db.DatabaseHelper.instance.getAllDecks();
     setState(() {
-      _selectedCardIndex = index;
+      _decks = deckMaps.map((deckMap) => customDeck.Deck.fromJson(deckMap)).toList();
     });
   }
 
-  void _editCard(customDeck.Card newCard) {
+  void _selectDeck(customDeck.Deck deck) async {
+    _selectedDeck = deck;
+    _deckNameController.text = deck.name;
+    List<Map<String, dynamic>> cardMaps = await db.DatabaseHelper.instance.getCardsForDeck(deck.id!);
     setState(() {
-      widget.deck.cards[_selectedCardIndex] = newCard;
+      _cards = cardMaps.map((cardMap) => customDeck.Card.fromJson(cardMap)).toList();
     });
   }
 
-  void _deleteCard() {
-    setState(() {
-      widget.deck.cards.removeAt(_selectedCardIndex);
-      if (_selectedCardIndex >= widget.deck.cards.length) {
-        _selectedCardIndex = widget.deck.cards.length - 1;
-      }
-    });
+  void _updateDeckName(int deckId, String newName) async {
+    await db.DatabaseHelper.instance.updateDeckName(deckId, newName);
+    _loadDecks(); // Reload decks to reflect changes
+  }
+
+  void _editCard(customDeck.Card card) {
+    _questionController.text = card.question;
+    _answerController.text = card.answer;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Card'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Question'),
+                controller: _questionController,
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Answer'),
+                controller: _answerController,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // Update card information in the database
+                card.question = _questionController.text.trim();
+                card.answer = _answerController.text.trim();
+                await db.DatabaseHelper.instance.updateCard(card);
+                _loadDecks(); // Reload decks to reflect changes
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Edit Deck')),
+      appBar: AppBar(
+        title: Text('Edit Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.blue[700])),
+        backgroundColor: Colors.tealAccent),
       body: Column(
         children: <Widget>[
           Expanded(
+            flex: 2,
             child: ListView.builder(
-              itemCount: widget.deck.cards.length,
+              itemCount: _decks.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('Card ${index + 1}'),
-                  subtitle: Text('Question: ${widget.deck.cards[index].question}\nAnswer: ${widget.deck.cards[index].answer}'),
+                  title: Text(_decks[index].name, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
                   onTap: () {
-                    _selectCard(index);
+                    _selectDeck(_decks[index]);
                   },
-                  selected: _selectedCardIndex == index,
-                  selectedTileColor: Colors.blueGrey[100],
                 );
               },
             ),
           ),
-          Row(
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Back'),
-              ),
-              Spacer(),
-              ElevatedButton(
-                onPressed: _deleteCard,
-                child: Text('Delete'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      String newQuestion = '';
-                      String newAnswer = '';
-                      return AlertDialog(
-                        title: Text('Edit Card'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            TextField(
-                              decoration: InputDecoration(labelText: 'Question'),
-                              onChanged: (value) {
-                                newQuestion = value;
-                              },
-                            ),
-                            TextField(
-                              decoration: InputDecoration(labelText: 'Answer'),
-                              onChanged: (value) {
-                                newAnswer = value;
-                              },
-                            ),
-                          ],
-                        ),
-                        actions: <Widget>[
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              customDeck.Card newCard = customDeck.Card(newQuestion, newAnswer);
-                              _editCard(newCard);
-                              Navigator.pop(context);
-                            },
-                            child: Text('Save'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Text('Edit'),
-              ),
-            ],
+          if (_selectedDeck != null) ...[
+            TextField(
+              controller: _deckNameController,
+              decoration: InputDecoration(labelText: 'Deck Name'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updateDeckName(_selectedDeck!.id!, _deckNameController.text);
+              },
+              child: Text('Save Deck Name'),
+            ),
+          ],
+          Expanded(
+            flex: 3,
+            child: ListView.builder(
+              itemCount: _cards.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text('Card ${index + 1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  subtitle: Text('Question: ${_cards[index].question}\nAnswer: ${_cards[index].answer}'),
+                  onTap: () {
+                    _editCard(_cards[index]);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
