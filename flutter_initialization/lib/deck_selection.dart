@@ -1,33 +1,31 @@
-// deck_selection.dart
 import 'package:flutter/material.dart';
+import 'databaseHelper.dart' as db;
 import 'deck.dart';
 import 'quiz_page.dart';
 
 class DeckSelection extends StatefulWidget {
-  final List<Deck> decks;
-
-  DeckSelection({required this.decks});
-
   @override
   _DeckSelectionState createState() => _DeckSelectionState();
 }
 
 class _DeckSelectionState extends State<DeckSelection> {
-  late Deck _selectedDeck;
+  List<Deck> _decks = []; // Store the retrieved decks here
 
   @override
   void initState() {
     super.initState();
-    _selectedDeck = widget.decks.isNotEmpty ? widget.decks.first : Deck('', []);
+    _fetchDecks(); // Fetch decks from the database when the widget initializes
   }
 
-  void _selectDeck(Deck deck) {
+  Future<void> _fetchDecks() async {
+    List<Map<String, dynamic>> deckMaps = await db.DatabaseHelper.instance.getAllDecks();
+    List<Deck> decks = deckMaps.map((deckMap) => Deck.fromJson(deckMap)).toList();
     setState(() {
-      _selectedDeck = deck;
+      _decks = decks;
     });
   }
 
-  void _startQuiz() {
+  void _selectDeck(Deck deck) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => QuizPage(questions: [], answers: [])),
@@ -39,19 +37,21 @@ class _DeckSelectionState extends State<DeckSelection> {
     return Scaffold(
       appBar: AppBar(title: Text('Deck Selection')),
       body: ListView.builder(
-        itemCount: widget.decks.length,
+        itemCount: _decks.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(widget.decks[index].name),
+            title: Text(_decks[index].name),
             onTap: () {
-              _selectDeck(widget.decks[index]);
+              _selectDeck(_decks[index]);
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _selectedDeck == null ? null : _startQuiz,
-        child: Icon(Icons.play_arrow),
+        onPressed: () {
+          // Add functionality to add a new deck
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
