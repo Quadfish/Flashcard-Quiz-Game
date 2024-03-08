@@ -28,6 +28,13 @@ class _DeckEditorState extends State<DeckEditor> {
     });
   }
 
+  Future<void> _loadCards() async {
+    List<Map<String, dynamic>> cardMaps = await db.DatabaseHelper.instance.getCardsForDeck(_selectedDeck!.id!);
+      setState(() {
+        _cards = cardMaps.map((cardMap) => customDeck.Card.fromJson(cardMap)).toList();
+      });
+  }
+
   void _selectDeck(customDeck.Deck deck) async {
     _selectedDeck = deck;
     _deckNameController.text = deck.name;
@@ -67,6 +74,8 @@ class _DeckEditorState extends State<DeckEditor> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
+                _questionController.clear();
+                _answerController.clear();
                 Navigator.pop(context);
               },
               child: Text('Cancel'),
@@ -77,7 +86,9 @@ class _DeckEditorState extends State<DeckEditor> {
                 card.question = _questionController.text.trim();
                 card.answer = _answerController.text.trim();
                 await db.DatabaseHelper.instance.updateCard(card);
-                _loadDecks(); // Reload decks to reflect changes
+                _loadCards();
+                _questionController.clear();
+                _answerController.clear();
                 Navigator.pop(context);
               },
               child: Text('Save'),
@@ -86,6 +97,64 @@ class _DeckEditorState extends State<DeckEditor> {
         );
       },
     );
+  }
+
+ void _addCardToDeck() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Add Card'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: 'Question'),
+              controller: _questionController,
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Answer'),
+              controller: _answerController,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              if (_selectedDeck != null) {
+                // Add card to the selected deck
+                await db.DatabaseHelper.instance.insertCard(
+                  _selectedDeck!.id!,
+                  _questionController.text.trim(),
+                  _answerController.text.trim(),
+                );
+                _loadCards();
+                _questionController.clear();
+                _answerController.clear();
+                Navigator.pop(context);
+              } 
+            },
+            child: Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  void _deleteCard(customDeck.Card card) async {
+    await db.DatabaseHelper.instance.deleteCard(card.id!);
+    _loadCards(); // Reload decks to reflect changes
+  }
+
+  void _deleteDeck(customDeck.Deck deck) async {
+    await db.DatabaseHelper.instance.deleteDeck(deck.id!);
+    _deckNameController.clear();
+    _loadDecks();
+    setState((){
+      _cards = [];
+      _selectedDeck = null;
+    });
   }
 
   @override
@@ -102,9 +171,21 @@ class _DeckEditorState extends State<DeckEditor> {
               itemCount: _decks.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(_decks[index].name, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(_decks[index].name, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.grey[400]),
+                        onPressed: () {
+                          _deleteDeck(_decks[index]);
+                        },
+                      ),
+                    ],
+                  ),
                   onTap: () {
-                    _selectDeck(_decks[index]);
+                      _selectDeck(_decks[index]);
                   },
                 );
               },
@@ -115,11 +196,21 @@ class _DeckEditorState extends State<DeckEditor> {
               controller: _deckNameController,
               decoration: InputDecoration(labelText: 'Deck Name'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                _updateDeckName(_selectedDeck!.id!, _deckNameController.text);
-              },
-              child: Text('Save Deck Name'),
+            Row(
+              children: [
+                SizedBox(width: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    _updateDeckName(_selectedDeck!.id!, _deckNameController.text);
+                  },
+                  child: Text('Save Deck Name', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                ),
+                SizedBox(width: 30),
+                ElevatedButton(
+                  onPressed: _addCardToDeck,
+                  child: Text('Add Card', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                ),
+              ],
             ),
           ],
           Expanded(
@@ -128,7 +219,19 @@ class _DeckEditorState extends State<DeckEditor> {
               itemCount: _cards.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('Card ${index + 1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text('Card ${index + 1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.grey[400]),
+                        onPressed: () {
+                          _deleteCard(_cards[index]);
+                        },
+                      ),
+                    ],
+                  ),
                   subtitle: Text('Question: ${_cards[index].question}\nAnswer: ${_cards[index].answer}'),
                   onTap: () {
                     _editCard(_cards[index]);

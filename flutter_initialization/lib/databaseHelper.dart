@@ -50,7 +50,8 @@ class DatabaseHelper {
 
     Future<int> insertCard(int deckId, String question, String answer) async {
         final Database db = await database;
-        return await db.insert('cards', {'deck_id': deckId, 'question': question, 'answer': answer});
+        int id = await db.insert('cards', {'deck_id': deckId, 'question': question, 'answer': answer});
+        return id;
     }
 
     Future<List<Map<String, dynamic>>> getCardsForDeck(int deckId) async {
@@ -94,6 +95,24 @@ class DatabaseHelper {
             },
             where: 'id = ?',
             whereArgs: [card.id!],
+        );
+    }
+
+    Future<void> deleteDeck(int deckId) async {
+        final db = await database;
+        await db.delete(
+            'decks',
+            where: 'id = ?',
+            whereArgs: [deckId],
+        );
+    }
+
+    Future<void> deleteCard(int cardId) async {
+        final db = await database;
+        await db.delete(
+            'cards',
+            where: 'id = ?',
+            whereArgs: [cardId],
         );
     }
 }

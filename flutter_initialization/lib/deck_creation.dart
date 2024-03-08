@@ -43,6 +43,7 @@ class _DeckCreationState extends State<DeckCreation> {
       int deckId = await db.DatabaseHelper.instance.insertDeckAndCards(deck);
       // Clear the current deck being made
       setState(() {
+        _deckNameController.clear();
         _cards.clear();
       });
     }  
@@ -59,7 +60,7 @@ class _DeckCreationState extends State<DeckCreation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.blue[700])), 
+        title: Text('Create Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green[400])), 
         backgroundColor: Colors.tealAccent[100]),
       body: Form(
         key: _formKey,
@@ -102,7 +103,7 @@ class _DeckCreationState extends State<DeckCreation> {
               onPressed: _addCard,
               child: Text(
                 'Add Card', 
-                style: TextStyle(fontSize: 18, color: Colors.blue)
+                style: TextStyle(fontSize: 18, color: Colors.green[400])
                 ),
             ),
             Expanded(
@@ -120,7 +121,7 @@ class _DeckCreationState extends State<DeckCreation> {
               onPressed: _saveDeck,
               child: Text(
                 'Save Deck', 
-                style: TextStyle(fontSize: 18, color: Colors.blue)
+                style: TextStyle(fontSize: 18, color: Colors.green[400])
                 ),
             ),
           ],

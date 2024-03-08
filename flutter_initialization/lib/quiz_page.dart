@@ -1,12 +1,11 @@
-// quiz_page.dart
 import 'package:flutter/material.dart';
-
+import 'deck.dart' as customDeck;
 class QuizPage extends StatefulWidget {
-  final List<String> questions;
-  final List<String> answers;
+  final customDeck.Deck deck;
+  final List<customDeck.Card> cards;
   final bool shuffle;
 
-  QuizPage({required this.questions, required this.answers, this.shuffle = false});
+  QuizPage({required this.deck, required this.cards, this.shuffle = false});
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -18,11 +17,11 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> displayList;
+    List<customDeck.Card> displayList;
     if (widget.shuffle) {
-      displayList = List.from(widget.questions)..shuffle();
+      displayList = List.from(widget.cards)..shuffle();
     } else {
-      displayList = widget.questions;
+      displayList = widget.cards;
     }
 
     return Scaffold(
@@ -54,7 +53,7 @@ class _QuizPageState extends State<QuizPage> {
           Expanded(
             child: Center(
               child: Text(
-                _questionFirst ? displayList[_currentIndex] : widget.answers[_currentIndex],
+                displayList[_currentIndex].question,
                 style: TextStyle(fontSize: 24),
                 textAlign: TextAlign.center,
               ),
@@ -66,7 +65,7 @@ class _QuizPageState extends State<QuizPage> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _currentIndex = (_currentIndex + 1) % widget.questions.length;
+                    _currentIndex = (_currentIndex + 1) % displayList.length;
                   });
                 },
                 child: Text('Next'),
