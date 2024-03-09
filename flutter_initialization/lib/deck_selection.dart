@@ -1,33 +1,51 @@
+// deck_selection.dart
 import 'package:flutter/material.dart';
 import 'databaseHelper.dart' as db;
 import 'deck.dart' as customDeck;
+import 'deck_editor.dart';
 import 'quiz_page.dart';
+
 
 class DeckSelection extends StatefulWidget {
   @override
   _DeckSelectionState createState() => _DeckSelectionState();
 }
 
+
 class _DeckSelectionState extends State<DeckSelection> {
-  List<customDeck.Deck> _decks = []; // Store the retrieved decks here
+  List<customDeck.Deck> _decks = [];
+
+
   @override
   void initState() {
     super.initState();
-    _fetchDecks(); // Fetch decks from the database when the widget initializes
+    _fetchDecks();
   }
+
 
   Future<void> _fetchDecks() async {
     List<Map<String, dynamic>> deckMaps = await db.DatabaseHelper.instance.getAllDecks();
-    List<customDeck.Deck> decks = deckMaps.map((deckMap) => customDeck.Deck.fromJson(deckMap)).toList();
+    List<customDeck.Deck> decks = [];
+   
+    for (var deckMap in deckMaps) {
+      customDeck.Deck deck = customDeck.Deck.fromJson(deckMap);
+      List<Map<String, dynamic>> cardMaps = await db.DatabaseHelper.instance.getCardsForDeck(deck.id!);
+      deck.cards = cardMaps.map((cardMap) => customDeck.Card.fromJson(cardMap)).toList();
+      decks.add(deck);
+    }
+
+
     setState(() {
       _decks = decks;
     });
   }
 
+
   Future<List<customDeck.Card>> _fetchCardsForDeck(customDeck.Deck deck) async {
     List<Map<String, dynamic>> cardMaps = await db.DatabaseHelper.instance.getCardsForDeck(deck.id!);
     return cardMaps.map((cardMap) => customDeck.Card.fromJson(cardMap)).toList();
   }
+
 
   void _selectDeck(customDeck.Deck deck) async {
     List<customDeck.Card> cards = await _fetchCardsForDeck(deck);
@@ -53,6 +71,7 @@ class _DeckSelectionState extends State<DeckSelection> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +80,7 @@ class _DeckSelectionState extends State<DeckSelection> {
         itemCount: _decks.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(_decks[index].name),
+            title: Text('${_decks[index].name} (${_decks[index].cards.length} cards)'),
             onTap: () {
               _selectDeck(_decks[index]);
             },
@@ -70,7 +89,10 @@ class _DeckSelectionState extends State<DeckSelection> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add functionality to add a new deck
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DeckEditor()),
+          );
         },
         child: Icon(Icons.add),
       ),

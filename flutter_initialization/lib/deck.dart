@@ -1,8 +1,7 @@
 // deck.dart
 class Card {
   int? id;
-  int? deckId; // Define deckId property
-
+  int? deckId;
   String question;
   String answer;
 
@@ -20,18 +19,20 @@ class Card {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'deck_id': deckId, // Use deckId property
+      'deck_id': deckId,
       'question': question,
       'answer': answer,
     };
   }
 }
+
 class Deck {
   int? id;
   String name;
+  String description;
   List<Card> cards;
 
-  Deck(this.name, this.cards, {this.id});
+  Deck(this.name, this.description, this.cards, {this.id});
 
   factory Deck.fromJson(Map<String, dynamic> json) {
     List<dynamic> cardList = json['cards'] ?? [];
@@ -39,6 +40,7 @@ class Deck {
 
     return Deck(
       json['name'] ?? '',
+      json['description'] ?? '',
       parsedCards,
       id: json['id'] as int?,
     );
@@ -48,6 +50,7 @@ class Deck {
     return {
       'id': id,
       'name': name,
+      'description': description,
       'cards': cards.map((card) => card.toJson()).toList(),
     };
   }
