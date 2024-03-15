@@ -36,8 +36,7 @@ class Deck extends ChangeNotifier {
   String name;
   String description;
   List<Card> cards;
-  List<Card> faceUpCards = [];
-  int currentIndex = 0;
+
 
   Deck(this.name, this.description, this.cards, {this.id});
 
@@ -52,7 +51,7 @@ class Deck extends ChangeNotifier {
       id: json['id'] as int?,
     );
   }
-
+/*
   void flipCard(Card card) {
     card.isFaceUp = !card.isFaceUp;
     if (card.isFaceUp) {
@@ -62,13 +61,5 @@ class Deck extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  void nextCard() {
-    currentIndex = (currentIndex + 1) % cards.length;
-    cards[currentIndex].isFaceUp = false; // Ensure next card starts as question side up
-  }
-
-  Card getCurrentCard() {
-    return cards[currentIndex];
-  }
+  */
 }

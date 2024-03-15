@@ -2,7 +2,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
-import 'Cardss.dart';
+import 'Cards.dart';
 
 class QuizPage extends StatefulWidget {
   final customDeck.Deck deck;
