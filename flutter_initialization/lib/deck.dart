@@ -36,7 +36,7 @@ class Deck extends ChangeNotifier {
   String name;
   String description;
   List<Card> cards;
-   List<Card> faceUpCards = [];
+  List<Card> faceUpCards = [];
   int currentIndex = 0;
 
   Deck(this.name, this.description, this.cards, {this.id});

@@ -1,19 +1,19 @@
 // Card.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_initialization/deck.dart';
-import 'deck.dart';
+import 'deck.dart' as customDeck;
 
-class Card extends StatefulWidget {
-  final Deck card;
+
+class Cards extends StatefulWidget {
+  final customDeck.Card cards;
   final Function onTap;
 
-  Card({required this.card, required this.onTap});
+  Cards({required this.cards, required this.onTap});
 
   @override
   _CardState createState() => _CardState();
 }
 
-class _CardState extends State<Card> with SingleTickerProviderStateMixin {
+class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -46,7 +46,7 @@ class _CardState extends State<Card> with SingleTickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         _controller.forward();
-        widget.onTap(widget.card);
+        widget.onTap(widget.cards);
       },
       child: AnimatedBuilder(
         animation: _animation,
@@ -64,7 +64,7 @@ class _CardState extends State<Card> with SingleTickerProviderStateMixin {
           height: 100,
           width: 100,
           decoration: BoxDecoration(
-            color: widget.card.isFaceUp ? Colors.white : Colors.grey,
+            color: widget.cards.isFaceUp ? Colors.white : Colors.grey,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -76,7 +76,7 @@ class _CardState extends State<Card> with SingleTickerProviderStateMixin {
           ),
           child: Center(
             child: Text(
-              widget.card.isFaceUp ? widget.card.front : widget.card.back,
+              widget.cards.isFaceUp ? widget.cards.question : widget.cards.answer,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           ),

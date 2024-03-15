@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
+import 'Cardss.dart';
 
 class QuizPage extends StatefulWidget {
   final customDeck.Deck deck;
@@ -85,8 +86,8 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
                         child: Text(
                           // Switched between question and answer based on the state
                           _questionFirst
-                              ? widget.cards[_currentIndex].question
-                              : widget.cards[_currentIndex].answer,
+                              ? widget.cards[_currentIndex].answer
+                              : widget.cards[_currentIndex].question,
                           style: TextStyle(fontSize: 24, color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
@@ -109,7 +110,6 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
                     } else {
                       // Increment index only when switching from answer to question
                       _currentIndex = (_currentIndex + 1) % widget.cards.length;
-                      _questionFirst = true;
                     }
                   });
                 },
