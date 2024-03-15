@@ -108,7 +108,7 @@ class DatabaseHelper {
     );
   }
 
-    Future<void> updateDeckDetails(int deckId, String newName, String newDescription) async {
+  Future<void> updateDeckDetails(int deckId, String newName, String newDescription) async {
     final db = await database;
     await db.transaction((txn) async {
       await txn.update(

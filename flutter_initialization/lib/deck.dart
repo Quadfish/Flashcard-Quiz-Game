@@ -8,7 +8,7 @@ class Card {
   String answer;
   bool isFaceUp;
 
-  Card({this.id, this.deckId, required this.question, required this.answer, this.isFaceUp = false});
+  Card({this.id, this.deckId, required this.question, required this.answer, this.isFaceUp = true});
 
   factory Card.fromJson(Map<String, dynamic> json) {
     return Card(
@@ -16,7 +16,7 @@ class Card {
       deckId: json['deck_id'],
       question: json['question'] ?? '',
       answer: json['answer'] ?? '',
-      isFaceUp: json['is_face_up'] ?? false,
+      isFaceUp: json['is_face_up'] ?? true,
     );
   }
 
@@ -51,15 +51,4 @@ class Deck extends ChangeNotifier {
       id: json['id'] as int?,
     );
   }
-/*
-  void flipCard(Card card) {
-    card.isFaceUp = !card.isFaceUp;
-    if (card.isFaceUp) {
-      faceUpCards.add(card);
-    } else {
-      faceUpCards.remove(card);
-    }
-    notifyListeners();
-  }
-  */
 }

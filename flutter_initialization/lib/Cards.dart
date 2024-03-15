@@ -1,6 +1,7 @@
 // Card.dart
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
+import 'dart:math';
 
 
 class Cards extends StatefulWidget {
@@ -29,8 +30,11 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
 
     _animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
-        _controller.reverse();
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          widget.cards.isFaceUp = !widget.cards.isFaceUp;
+        });
+        _controller.reset();
       }
     });
   }
@@ -41,30 +45,36 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void _onTap() {
+    if (!_controller.isAnimating) {
+      _controller.forward();
+      widget.onTap(widget.cards);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        _controller.forward();
-        widget.onTap(widget.cards);
-      },
+      onTap: _onTap,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
+          double angle = _animation.value * pi;
+          if(angle > pi/2){
+            angle = pi - angle;
+          }
           return Transform(
             alignment: Alignment.center,
-            transform: Matrix4.rotationY(_animation.value * 3.141), 
+            transform: Matrix4.rotationY(angle), 
             child: child,
           );
         },
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+        child: Container(
           margin: EdgeInsets.all(5),
-          height: 100,
+          height: 200,
           width: 100,
           decoration: BoxDecoration(
-            color: widget.cards.isFaceUp ? Colors.white : Colors.grey,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -75,10 +85,10 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
             ],
           ),
           child: Center(
-            child: Text(
+            child: _animation.value < 0.5 ? Text(
               widget.cards.isFaceUp ? widget.cards.question : widget.cards.answer,
               style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
+            ) : Container(),
           ),
         ),
       ),

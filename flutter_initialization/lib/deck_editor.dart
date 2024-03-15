@@ -151,6 +151,7 @@ class _DeckEditorState extends State<DeckEditor> {
   void _deleteDeck(customDeck.Deck deck) async {
     await db.DatabaseHelper.instance.deleteDeck(deck.id!);
     _deckNameController.clear();
+    _descriptionController.clear();
     _loadDecks();
     setState(() {
       _cards = [];
