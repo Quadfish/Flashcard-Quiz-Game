@@ -1,21 +1,19 @@
+//quiz_page.dart
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
 
 class QuizPage extends StatefulWidget {
   final customDeck.Deck deck;
   final List<customDeck.Card> cards;
-  final bool shuffle;
 
-  QuizPage({required this.deck, required this.cards, this.shuffle = false});
+  QuizPage({required this.deck, required this.cards});
 
   @override
   _QuizPageState createState() => _QuizPageState();
 }
 
-class _QuizPageState extends State<QuizPage>
-    with SingleTickerProviderStateMixin {
+class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   bool _questionFirst = true;
   late AnimationController _controller;
@@ -37,13 +35,6 @@ class _QuizPageState extends State<QuizPage>
 
   @override
   Widget build(BuildContext context) {
-    List<customDeck.Card> displayList;
-    if (widget.shuffle) {
-      displayList = List.from(widget.cards)..shuffle();
-    } else {
-      displayList = widget.cards;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Quiz'),
@@ -94,8 +85,8 @@ class _QuizPageState extends State<QuizPage>
                         child: Text(
                           // Switched between question and answer based on the state
                           _questionFirst
-                              ? displayList[_currentIndex].question
-                              : displayList[_currentIndex].answer,
+                              ? widget.cards[_currentIndex].question
+                              : widget.cards[_currentIndex].answer,
                           style: TextStyle(fontSize: 24, color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
@@ -117,7 +108,7 @@ class _QuizPageState extends State<QuizPage>
                       _questionFirst = false;
                     } else {
                       // Increment index only when switching from answer to question
-                      _currentIndex = (_currentIndex + 1) % displayList.length;
+                      _currentIndex = (_currentIndex + 1) % widget.cards.length;
                       _questionFirst = true;
                     }
                   });

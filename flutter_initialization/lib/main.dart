@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'deck_creation.dart';
 import 'deck_editor.dart';
 import 'deck_selection.dart';
-import 'quiz_page.dart';
-import 'deck.dart';
 
 void main() {
   runApp(MyApp());
