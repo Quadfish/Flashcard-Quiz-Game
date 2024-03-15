@@ -17,7 +17,12 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'flashcard_database.db');
-    return await openDatabase(path, version: 1, onCreate: _createDatabase);
+    return await openDatabase(
+      path, 
+      version: 2, 
+      onCreate: _createDatabase,
+      onUpgrade: _updateDatabase,
+      );
   }
 
   Future<void> _createDatabase(Database db, int version) async {
@@ -38,6 +43,12 @@ class DatabaseHelper {
                 FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
             )
         ''');
+  }
+
+  Future<void> _updateDatabase(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE decks ADD COLUMN description TEXT');
+    }
   }
 
   Future<int> insertDeck(String name, String description) async {

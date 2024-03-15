@@ -1,5 +1,4 @@
 //quiz_page.dart
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
 import 'Cards.dart';
@@ -23,7 +22,7 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz'),
+        title: const Text('Quiz'),
       ),
       body: Column(
         children: [
@@ -43,13 +42,13 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
                       currentCard.isFaceUp = true;
                   });
                 },
-                child: Text('Next'),
+                child: const Text('Next'),
               ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Quit'),
+                child: const Text('Quit'),
               ),
             ],
           ),

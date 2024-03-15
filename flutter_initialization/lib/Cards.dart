@@ -24,7 +24,7 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
     );
 
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
@@ -66,31 +66,31 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
           return Transform(
             alignment: Alignment.center,
             transform: Matrix4.rotationY(angle), 
-            child: child,
+            child: Center(
+              child: Container(
+                height: 200,
+                width: 350,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0, 4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: _animation.value < 0.5 ? Text(
+                    widget.cards.isFaceUp ? widget.cards.question : widget.cards.answer,
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
+                  ) : Container(),
+                ),
+              ),
+            ),
           );
         },
-        child: Container(
-          margin: EdgeInsets.all(5),
-          height: 200,
-          width: 100,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, 4),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: Center(
-            child: _animation.value < 0.5 ? Text(
-              widget.cards.isFaceUp ? widget.cards.question : widget.cards.answer,
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ) : Container(),
-          ),
-        ),
       ),
     );
   }
