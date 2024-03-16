@@ -164,8 +164,9 @@ class _DeckEditorState extends State<DeckEditor> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.blue[700])),
-        backgroundColor: Colors.tealAccent,
+        backgroundColor: Colors.tealAccent[100],
       ),
+      backgroundColor: Colors.amber[50],
       body: Column(
         children: <Widget>[
           Expanded(

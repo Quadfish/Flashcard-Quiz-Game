@@ -63,6 +63,7 @@ class _DeckCreationState extends State<DeckCreation> {
         title: Text('Create Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green[400])),
         backgroundColor: Colors.tealAccent[100],
       ),
+      backgroundColor: Colors.amber[50],
       body: Form(
         key: _formKey,
         child: Column(

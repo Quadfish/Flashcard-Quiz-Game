@@ -26,16 +26,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FlashNPass', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.blue[700])),
+        title: Text('FlashNPass', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.black)),
         backgroundColor: Colors.tealAccent[100],
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.amber[50],
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('                          Enter the game! \n - Use the Create Deck tool to create your very own flash card quiz!\n - Edit your decks and make sure your facts are on point.\n - Finally, take the deck into play and test your knowledge!', 
-            style: TextStyle(fontSize: 18, color: Colors.tealAccent[100]),),
+            Text('Enter the game! \n - Use the Create Deck tool to create your very own flash card quiz!\n - Edit your decks and make sure your facts are on point.\n - Finally, take the deck into play and test your knowledge!', 
+            style: TextStyle(fontSize: 18, color: Colors.black),
+            textAlign: TextAlign.center,
+            ),
             SizedBox(
               height: 20
             ),

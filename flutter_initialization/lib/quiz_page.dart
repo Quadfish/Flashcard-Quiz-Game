@@ -22,8 +22,10 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz'),
+        title: Text('Quiz', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.purple[600])),
+        backgroundColor: Colors.tealAccent[100],
       ),
+      backgroundColor: Colors.amber[50],
       body: Column(
         children: [
           Expanded(
@@ -42,13 +44,13 @@ class _QuizPageState extends State<QuizPage> with SingleTickerProviderStateMixin
                       currentCard.isFaceUp = true;
                   });
                 },
-                child: const Text('Next'),
+                child: Text('Next', style: TextStyle(fontSize: 18)),
               ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Quit'),
+                child: Text('Quit', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),

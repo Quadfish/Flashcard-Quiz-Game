@@ -75,7 +75,11 @@ class _DeckSelectionState extends State<DeckSelection> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Deck Selection')),
+      appBar: AppBar(
+        title: Text('Deck Selection', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.purple[600])),
+        backgroundColor: Colors.tealAccent[100],
+        ),
+        backgroundColor: Colors.amber[50],
       body: ListView.builder(
         itemCount: _decks.length,
         itemBuilder: (context, index) {
@@ -94,7 +98,7 @@ class _DeckSelectionState extends State<DeckSelection> {
             MaterialPageRoute(builder: (context) => DeckEditor()),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.edit),
       ),
     );
   }

@@ -43,6 +43,30 @@ class DatabaseHelper {
                 FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
             )
         ''');
+
+    int deckId = await db.insert('decks', {
+      'name': 'Sample Deck',
+      'description': 'Sample Description'
+    });
+
+    await db.insert('cards', {
+      'deck_id': deckId,
+      'question': 'Who was the first president?',
+      'answer': 'George Washington'
+    });
+
+    await db.insert('cards', {
+      'deck_id': deckId,
+      'question': 'What is the periodic table representation of gold?',
+      'answer': 'Au'
+    });
+
+    await db.insert('cards', {
+      'deck_id': deckId,
+      'question': 'Who sang the song "Thriller"?',
+      'answer': 'Michael Jackson'
+    });
+
   }
 
   Future<void> _updateDatabase(Database db, int oldVersion, int newVersion) async {

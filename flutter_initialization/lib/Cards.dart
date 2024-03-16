@@ -84,6 +84,7 @@ class _CardState extends State<Cards> with SingleTickerProviderStateMixin {
                 child: Center(
                   child: _animation.value < 0.5 ? Text(
                     widget.cards.isFaceUp ? widget.cards.question : widget.cards.answer,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 24, color: Colors.black),
                   ) : Container(),
                 ),
