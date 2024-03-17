@@ -1,7 +1,7 @@
-// deck_creation.dart
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
 import 'databaseHelper.dart' as db;
+import 'package:google_fonts/google_fonts.dart';
 
 class DeckCreation extends StatefulWidget {
   @override
@@ -11,10 +11,10 @@ class DeckCreation extends StatefulWidget {
 class _DeckCreationState extends State<DeckCreation> {
   final _formKey = GlobalKey<FormState>();
   String _deckName = '';
-  String _deckDescription = ''; // New variable for deck description
+  String _deckDescription = '';
   List<customDeck.Card> _cards = [];
   TextEditingController _deckNameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController(); // New TextEditingController for deck description
+  TextEditingController _descriptionController = TextEditingController();
   TextEditingController _questionController = TextEditingController();
   TextEditingController _answerController = TextEditingController();
 
@@ -40,9 +40,9 @@ class _DeckCreationState extends State<DeckCreation> {
 
   void _saveDeck() async {
     String deckName = _deckNameController.text.trim();
-    String deckDescription = _descriptionController.text.trim(); // Get the deck description
+    String deckDescription = _descriptionController.text.trim(); 
     if (deckName.isNotEmpty) {
-      customDeck.Deck deck = customDeck.Deck(deckName, deckDescription, _cards); // Pass deck description to Deck constructor
+      customDeck.Deck deck = customDeck.Deck(deckName, deckDescription, _cards); 
       int deckId = await db.DatabaseHelper.instance.insertDeckAndCards(deck);
       setState(() {
         _deckNameController.clear();
@@ -50,8 +50,9 @@ class _DeckCreationState extends State<DeckCreation> {
         _cards.clear();
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please enter a deck name.'),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a deck name.'),
       ));
     }
   }
@@ -60,7 +61,16 @@ class _DeckCreationState extends State<DeckCreation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green[400])),
+        title: Text(
+          'Create Deck',
+          style: GoogleFonts.getFont(
+            'Roboto',
+            fontSize: 26,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.bold,
+            color: Colors.green[400],
+          ),
+        ),
         backgroundColor: Colors.tealAccent[100],
       ),
       backgroundColor: Colors.amber[50],
@@ -109,7 +119,11 @@ class _DeckCreationState extends State<DeckCreation> {
               onPressed: _addCard,
               child: Text(
                 'Add Card',
-                style: TextStyle(fontSize: 18, color: Colors.green[400]),
+                style: GoogleFonts.getFont(
+                'Roboto',
+                fontSize: 18,
+                color: Colors.green[400]
+              ),
               ),
             ),
             Expanded(
@@ -127,7 +141,11 @@ class _DeckCreationState extends State<DeckCreation> {
               onPressed: _saveDeck,
               child: Text(
                 'Save Deck',
-                style: TextStyle(fontSize: 18, color: Colors.green[400]),
+                style: GoogleFonts.getFont(
+                'Roboto',
+                fontSize: 18,
+                color: Colors.green[400]
+              ),
               ),
             ),
           ],

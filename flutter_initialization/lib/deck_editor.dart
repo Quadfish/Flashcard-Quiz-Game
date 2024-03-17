@@ -1,7 +1,7 @@
-// deck_editor.dart
 import 'package:flutter/material.dart';
 import 'deck.dart' as customDeck;
 import 'databaseHelper.dart' as db;
+import 'package:google_fonts/google_fonts.dart';
 
 class DeckEditor extends StatefulWidget {
   @override
@@ -60,7 +60,7 @@ class _DeckEditorState extends State<DeckEditor> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Card'),
+          title: const Text('Edit Card'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -81,7 +81,7 @@ class _DeckEditorState extends State<DeckEditor> {
                 _answerController.clear();
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -93,7 +93,7 @@ class _DeckEditorState extends State<DeckEditor> {
                 _answerController.clear();
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -106,7 +106,7 @@ class _DeckEditorState extends State<DeckEditor> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Card'),
+          title: const Text('Add Card'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -135,7 +135,7 @@ class _DeckEditorState extends State<DeckEditor> {
                   Navigator.pop(context);
                 }
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -163,7 +163,16 @@ class _DeckEditorState extends State<DeckEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Deck', style: TextStyle(fontSize: 26, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.blue[700])),
+        title: Text(
+          'Edit Deck',
+          style: GoogleFonts.getFont(
+            'Roboto',
+            fontSize: 26,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue[700],
+          ),
+        ),
         backgroundColor: Colors.tealAccent[100],
       ),
       backgroundColor: Colors.amber[50],
@@ -179,7 +188,14 @@ class _DeckEditorState extends State<DeckEditor> {
                     title: Row(
                       children: [
                         Expanded(
-                          child: Text(_decks[index].name, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
+                          child: Text(
+                            _decks[index].name,
+                            style: GoogleFonts.getFont(
+                              'Roboto',
+                              fontSize: 20,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.grey[400]),
@@ -200,25 +216,37 @@ class _DeckEditorState extends State<DeckEditor> {
           if (_selectedDeck != null) ...[
             TextField(
               controller: _deckNameController,
-              decoration: InputDecoration(labelText: 'Deck Name'),
+              decoration: const InputDecoration(labelText: 'Deck Name'),
             ),
             TextField(
               controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Deck Description'),
+              decoration: const InputDecoration(labelText: 'Deck Description'),
             ),
             Row(
               children: [
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 ElevatedButton(
                   onPressed: () {
                     _updateDeckDetails(_selectedDeck!.id!, _deckNameController.text, _descriptionController.text);
                   },
-                  child: Text('Save Deck Details', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  child: const Text(
+                    'Save Deck Details',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 ElevatedButton(
                   onPressed: _addCardToDeck,
-                  child: Text('Add Card', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  child: const Text(
+                    'Add Card',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -233,7 +261,14 @@ class _DeckEditorState extends State<DeckEditor> {
                     title: Row(
                       children: [
                         Expanded(
-                          child: Text('Card ${index + 1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          child: Text(
+                            'Card ${index + 1}',
+                            style: GoogleFonts.getFont(
+                              'Roboto',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.grey[400]),
@@ -243,7 +278,9 @@ class _DeckEditorState extends State<DeckEditor> {
                         ),
                       ],
                     ),
-                    subtitle: Text('Question: ${_cards[index].question}\nAnswer: ${_cards[index].answer}'),
+                    subtitle: Text(
+                      'Question: ${_cards[index].question}\nAnswer: ${_cards[index].answer}',
+                    ),
                     onTap: () {
                       _editCard(_cards[index]);
                     },
